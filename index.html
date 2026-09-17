@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Tinder de estilo: arraste ambientes e descubra qual estilo de decoração combina com você, feito para a Decorafit.">
+<title>Tinder de Estilo</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg: #f7f5f2;
+    --grain-a: #ecebea;
+    --surface: #f68859;
+    --surface-2: #ebe9e9;
+    --line: #d6d4d4;
+    --ink: #ffffff;
+    --ink-soft: #ffe8de;
+    --accent: #cc734e;
+    --accent-ink: #2b1810;
+    --accent-soft: #ffe3d6;
+    --like: #3aa15c;
+    --nope: #c0392b;
+    --shadow: 0 1px 2px rgba(43,33,24,.06), 0 12px 28px -14px rgba(43,33,24,.22);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg: #f7f5f2;
+      --grain-a: #ecebea;
+      --surface: #f68859;
+      --surface-2: #4a3327;
+      --line: #8a4f34;
+      --ink: #ffffff;
+      --ink-soft: #ffe8de;
+      --accent: #cc734e;
+      --accent-ink: #2b1810;
+      --accent-soft: #4a3226;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 16px 32px -16px rgba(0,0,0,.6);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg: #f7f5f2;
+    --grain-a: #ecebea;
+    --surface: #f68859;
+    --surface-2: #4a3327;
+    --line: #8a4f34;
+    --ink: #ffffff;
+    --ink-soft: #ffe8de;
+    --accent: #cc734e;
+    --accent-ink: #2b1810;
+    --accent-soft: #4a3226;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 16px 32px -16px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+  *{ box-sizing: border-box; }
+  html, body{ margin: 0; padding: 0; touch-action: manipulation; }
+  img{ max-width: 100%; }
+  [hidden]{ display: none !important; }
+  body{
+    background:
+      radial-gradient(circle at 12% 8%, var(--grain-a) 0, transparent 40%),
+      radial-gradient(circle at 88% 92%, var(--grain-a) 0, transparent 42%),
+      var(--bg);
+    color: var(--ink);
+    font-family: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    padding: 32px 16px;
+    padding-block: 32px;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  h1,h2,h3,.display{
+    font-family: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin: 0;
+  }
+  .wrap{ width: 100%; max-width: 560px; }
+
+  header.brand{
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap: wrap; gap: 4px 10px;
+    margin-bottom: 18px; padding-inline: 4px;
+  }
+  .brand-logo{ height: clamp(9px, 2.6vw, 14px); width: auto; display:block; flex-shrink: 0; }
+  .brand-ig{
+    font-size: .8rem; color: #7a6f65; text-decoration:none;
+    border-bottom: 1px solid transparent; white-space: nowrap;
+  }
+  .brand-ig:hover{ border-color: #7a6f65; }
+
+  .card{
+    background: var(--surface);
+    border: none;
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .progress-track{
+    height: 5px; background: var(--surface-2);
+    position: relative;
+  }
+  .progress-fill{
+    height: 100%; background: var(--accent);
+    width: 0%; transition: width .35s ease;
+  }
+  @media (prefers-reduced-motion: reduce){ .progress-fill{ transition:none; } }
+
+  .pane{ padding: 30px 28px 32px; }
+  @media (max-width: 420px){ .pane{ padding: 24px 18px 26px; } }
+
+  .eyebrow{
+    display: inline-block;
+    font-size: .68rem; text-transform: uppercase; letter-spacing: .12em;
+    color: #f7f5f2; font-weight: 700; margin: 0 0 14px;
+    background: #262D3B; padding: 6px 14px; border-radius: 999px;
+  }
+
+  /* Intro */
+  .intro-title{ font-size: clamp(1.7rem, 5vw + .4rem, 2.35rem); line-height: 1.12; }
+  .intro-sub{ color: var(--ink-soft); font-size: .98rem; line-height:1.55; margin-top: 12px; max-width: 46ch; }
+  .intro-hero{
+    width:100%; aspect-ratio: 4 / 5; max-height: 48vh; border-radius: 16px; overflow:hidden;
+    box-shadow: var(--shadow); margin-top: 20px; margin-bottom: 24px;
+  }
+  .intro-hero img{ display:block; width:100%; height:100%; object-fit:cover; }
+
+  /* Buttons */
+  .btn{
+    appearance:none; border:none; cursor:pointer;
+    font-family: "Montserrat", sans-serif; font-weight: 700; font-size: .96rem;
+    padding: 14px 22px; border-radius: 999px;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    text-decoration:none;
+  }
+  .btn-primary{ background: var(--accent); color: #f7f5f2; width:100%; transition: background .15s ease, color .15s ease; }
+  .btn-primary:hover, .btn-primary:active{ background: #262D3B; color: #ffffff; }
+  .btn-primary:disabled{ opacity:.5; cursor:not-allowed; filter:none; }
+  .btn-ghost{
+    background: transparent; color: #262D3B; border: 1.5px solid #262D3B;
+    width:100%; transition: background .15s ease, color .15s ease;
+  }
+  .btn-ghost:hover{ background: #262D3B; color: #f7f5f2; }
+  .btn-text{
+    background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.4);
+    border-radius: 999px; color: #ffffff; font-family:"Montserrat",sans-serif;
+    font-size:.82rem; font-weight:700;
+    text-decoration: none; cursor:pointer; padding: 9px 16px;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .btn-text:hover{ background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.6); }
+  .btn:focus-visible, .btn-text:focus-visible, a:focus-visible, input:focus-visible, .swipe-btn:focus-visible{
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+
+  /* Back button (shared) */
+  .q-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom: 10px; }
+  .q-back{
+    appearance:none; background:none; border:none; cursor:pointer; padding:0;
+    font-family:"Montserrat",sans-serif; font-size:.82rem; font-weight:700;
+    color: var(--ink-soft); transition: color .15s ease;
+  }
+  .q-back:hover{ color: var(--ink); }
+  .q-back[hidden]{ display:none; }
+  #leadBack{ display:block; margin-bottom: 10px; }
+  .q-count{ font-size:.78rem; color: var(--ink-soft); margin:0; font-variant-numeric: tabular-nums; }
+
+  /* Swipe deck */
+  .deck{ position:relative; width:100%; aspect-ratio: 4 / 5; max-height: 56vh; margin: 4px 0 18px; }
+  .swipe-card{
+    position:absolute; inset:0; border-radius:20px; overflow:hidden;
+    box-shadow: var(--shadow); background: var(--surface-2);
+    touch-action: none; cursor: grab; user-select: none;
+  }
+  .swipe-card:active{ cursor:grabbing; }
+  .swipe-card img{ width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; }
+  .card-label{
+    position:absolute; left:0; right:0; bottom:0; padding: 20px 18px 18px;
+    background: linear-gradient(to top, rgba(20,12,8,.72), transparent);
+    color:#fff; font-size:1.12rem; font-weight:700; line-height:1.3;
+  }
+  .stamp{
+    position:absolute; top:22px; padding:8px 14px; border-radius:10px; border:3px solid;
+    font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.15rem; letter-spacing:.04em;
+    text-transform:uppercase; opacity:0; pointer-events:none;
+  }
+  .stamp-like{ left:18px; color:var(--like); border-color:var(--like); transform: rotate(-14deg); }
+  .stamp-nope{ right:18px; color:var(--nope); border-color:var(--nope); transform: rotate(14deg); }
+
+  .swipe-actions{ display:flex; justify-content:center; gap:22px; margin-top: 6px; }
+  .swipe-btn{
+    appearance:none; cursor:pointer; width:60px; height:60px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size: 1.5rem; background:#f7f5f2; box-shadow: var(--shadow); border: none;
+    transition: transform .1s ease;
+  }
+  .swipe-btn:active{ transform: scale(.92); }
+  .swipe-no{ color: var(--nope); }
+  .swipe-yes{ color: var(--like); }
+  .swipe-hint{ text-align:center; font-size:.78rem; color: var(--ink-soft); font-weight:600; margin: 14px 0 0; }
+
+  /* Lead form */
+  .lead-title{ font-size: 1.5rem; margin-bottom: 8px; }
+  .lead-sub{ color: var(--ink-soft); font-size:.92rem; margin-bottom: 22px; line-height:1.5; }
+  .field{ margin-bottom: 16px; }
+  .field label{ display:block; font-size:.82rem; font-weight:700; margin-bottom:6px; }
+  .field input{
+    width:100%; padding: 13px 14px; border-radius: 12px; border: none;
+    background: var(--accent); color: var(--ink); font-family:"Montserrat",sans-serif; font-size: 16px;
+  }
+  .field small{ display:block; color: var(--ink-soft); font-size: .74rem; margin-top: 5px; }
+
+  /* Result */
+  .result-eyebrow{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .result-hero{
+    width:100%; aspect-ratio: 4 / 3; border-radius: 16px; overflow:hidden;
+    border: none; box-shadow: var(--shadow); margin-top: 10px;
+  }
+  .result-hero img{ display:block; width:100%; height:100%; object-fit:cover; }
+  .result-name{ font-size: clamp(1.9rem, 6vw, 2.5rem); margin-top: 18px; }
+  .result-name::after{ content:""; display:block; width:56px; height:5px; border-radius:999px; background:#262D3B; margin-top:12px; }
+  .result-tagline{ font-style: italic; color: #262D3B; margin-top: 6px; font-size: 1.02rem; }
+  .palette{ display:flex; gap:0; margin: 22px 0 6px; width:fit-content; }
+  .palette span{ width:40px; height:40px; border-radius: 0; border:none; }
+  .result-desc{ margin-top: 16px; line-height:1.65; color: var(--ink); font-size: .98rem; }
+  .tips-title{ font-size: .78rem; text-transform:uppercase; letter-spacing:.1em; color: var(--ink-soft); margin: 26px 0 12px; font-weight:700; }
+  .tips{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:14px; counter-reset: tipnum; }
+  .tips li{ display:flex; gap:12px; font-size:.94rem; line-height:1.5; align-items:flex-start; }
+  .tips li::before{
+    counter-increment: tipnum; content: counter(tipnum);
+    flex:0 0 auto; width:24px; height:24px; margin-top:1px; border-radius:50%;
+    background:#262D3B; color:#f7f5f2; font-size:.72rem; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cta-stack{ display:flex; flex-direction:column; gap:10px; margin-top: 26px; }
+  .foot-links{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="brand">
+    <img class="brand-logo" src="img/logo-decorafit.png" alt="Decorafit">
+    <a class="brand-ig" href="https://instagram.com/decorafit_br" target="_blank" rel="noopener">@decorafit_br</a>
+  </header>
+
+  <div class="card">
+    <div class="progress-track" id="progressTrack" hidden>
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- INTRO -->
+    <section class="pane" id="screen-intro">
+      <p class="eyebrow">Match do estilo · 1 minuto</p>
+      <h1 class="intro-title">Ache seu match de estilo decorativo</h1>
+      <p class="intro-sub">Curtiu, arrasta pra direita. Não é a sua praia, arrasta pra esquerda. No final, revelamos com qual estilo você mais combina.</p>
+      <div class="intro-hero">
+        <img src="img/intro-hero.jpg" alt="Mão segurando um celular com o app Decorafit mostrando um card de swipe de decoração, com uma sala de estar aconchegante ao fundo" loading="lazy">
+      </div>
+      <button class="btn btn-primary" id="startBtn">Começar →</button>
+    </section>
+
+    <!-- SWIPE -->
+    <section class="pane" id="screen-swipe" hidden>
+      <div class="q-head">
+        <button type="button" class="q-back" id="swipeBack">← Voltar</button>
+        <p class="q-count" id="swipeCount"></p>
+      </div>
+      <div class="deck" id="deck"></div>
+      <div class="swipe-actions">
+        <button type="button" class="swipe-btn swipe-no" id="btnNo" aria-label="Não curti">✕</button>
+        <button type="button" class="swipe-btn swipe-yes" id="btnYes" aria-label="Gostei">♥</button>
+      </div>
+      <p class="swipe-hint">Arraste o card ou toque nos botões</p>
+    </section>
+
+    <!-- LEAD FORM -->
+    <section class="pane" id="screen-lead" hidden>
+      <button type="button" class="q-back" id="leadBack">← Voltar</button>
+      <p class="eyebrow">Deu match</p>
+      <h2 class="lead-title">Encontramos seu match!</h2>
+      <p class="lead-sub">Deixe seus dados para ver o resultado agora — e receber mais conteúdos sobre design de interiores.</p>
+      <form id="leadForm">
+        <div class="field">
+          <label for="leadName">Nome</label>
+          <input type="text" id="leadName" name="leadName" autocomplete="name" placeholder="Como podemos te chamar?" required>
+        </div>
+        <div class="field">
+          <label for="leadEmail">E-mail</label>
+          <input type="email" id="leadEmail" name="leadEmail" autocomplete="email" placeholder="seu@email.com" required>
+        </div>
+        <div class="field">
+          <label for="leadPhone">WhatsApp</label>
+          <input type="tel" id="leadPhone" name="leadPhone" inputmode="tel" autocomplete="tel" placeholder="(11) 91234-5678" required>
+        </div>
+        <button class="btn btn-primary" type="submit">Ver meu match →</button>
+      </form>
+    </section>
+
+    <!-- RESULT -->
+    <section class="pane" id="screen-result" hidden>
+      <div class="result-eyebrow">
+        <p class="eyebrow" style="margin:0">É um match com</p>
+      </div>
+      <div class="result-hero" id="rHero"></div>
+      <div class="palette" id="rPalette" aria-hidden="true"></div>
+      <h2 class="result-name" id="rName"></h2>
+      <p class="result-tagline" id="rTagline"></p>
+      <p class="result-desc" id="rDesc"></p>
+      <p class="tips-title">Como aplicar no seu espaço</p>
+      <ul class="tips" id="rTips"></ul>
+      <div class="cta-stack">
+        <a class="btn btn-primary" id="rCta" href="#" target="_blank" rel="noopener">Quero decorar meu apê assim →</a>
+        <button class="btn btn-ghost" id="rShare" type="button">Compartilhar este quiz</button>
+      </div>
+      <div class="foot-links">
+        <button class="btn-text" id="rRestart" type="button">Jogar de novo</button>
+        <a class="btn-text" href="https://instagram.com/decorafit_br" target="_blank" rel="noopener">Seguir @decorafit_br</a>
+      </div>
+    </section>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var SITE_URL = "https://campanha.decorafit.com.br/";
+  var LEADS_ENDPOINT = "https://script.google.com/macros/s/AKfycbx3qduzy6yMw5aUOBvMXDnwPeg3Li1aUep0XjENa8fribxZ3R1WvWzszrF14KNyu2xQ/exec";
+  var STYLE_ORDER = ["industrial","contemporaneo","classico","boho","japandi","escandinavo"];
+
+  var STYLES = {
+    industrial: {
+      name: "Industrial",
+      tagline: "Urbano, cru e autêntico.",
+      palette: ["#3a3a38","#8b4a3a","#c8c2b8"],
+      desc: "Você se identifica com a estética industrial: tijolo aparente, metal, concreto e madeira de demolição. Gosta de ambientes com personalidade forte e um quê despojado.",
+      tips: [
+        "Deixe instalações elétricas e tubulações aparentes quando possível.",
+        "Combine metal preto fosco com madeira envelhecida.",
+        "Invista em uma boa luminária estilo Edison como peça central."
+      ],
+      images: [
+        { type: "ambiente", img: "img/industrial-ambiente.jpg", imgAlt: "Sala de estar industrial em apartamento, com parede de tijolo aparente e vista da cidade" },
+        { type: "movel", img: "img/industrial-movel.jpg", imgAlt: "Poltrona de couro envelhecido com estrutura em metal preto, estilo industrial" },
+        { type: "objeto", img: "img/industrial-objeto.jpg", imgAlt: "Still de mesa lateral industrial com luminária estilo Edison, vaso de metal e livros" }
+      ]
+    },
+    contemporaneo: {
+      name: "Contemporâneo",
+      tagline: "Atual, funcional e sem exageros.",
+      palette: ["#f2f0ec","#b8ada0","#2b2b2b"],
+      desc: "Você gosta de ambientes integrados, linhas retas e uma mistura equilibrada de materiais. Seu apê ideal é prático, atual e nunca sai de moda — sem cair no vazio do minimalismo extremo.",
+      tips: [
+        "Invista em marcenaria planejada para integrar ambientes e esconder a bagunça.",
+        "Combine no máximo 3–4 materiais (madeira, metal, pedra, tecido) sem exagerar em nenhum.",
+        "Use uma paleta neutra como base e reserve a cor para poucos pontos de destaque."
+      ],
+      images: [
+        { type: "ambiente", img: "img/contemporaneo-ambiente.jpg", imgAlt: "Sala de estar contemporânea, com marcenaria planejada e paleta neutra" },
+        { type: "movel", img: "img/contemporaneo-movel.jpg", imgAlt: "Sofá de linhas retas em tecido cinza-claro ao lado de aparador em madeira clara" },
+        { type: "objeto", img: "img/contemporaneo-objeto.jpg", imgAlt: "Still de aparador contemporâneo com vaso, escultura geométrica e livros" }
+      ]
+    },
+    classico: {
+      name: "Clássico Contemporâneo",
+      tagline: "Elegância que atravessa o tempo.",
+      palette: ["#1f2a44","#a9824f","#f2eee6"],
+      desc: "Você aprecia simetria, proporção e móveis que não saem de moda. Prefere ambientes sofisticados, com toques de dourado e tecidos nobres, sem cair no exagero.",
+      tips: [
+        "Aposte em simetria: pares de poltronas, abajures e quadros.",
+        "Use veludo e tecidos com textura em pontos-chave.",
+        "Adicione um detalhe dourado — moldura, puxador ou luminária."
+      ],
+      images: [
+        { type: "ambiente", img: "img/classico-ambiente.jpg", imgAlt: "Sala clássica contemporânea, com poltronas de veludo azul-marinho e detalhes dourados" },
+        { type: "movel", img: "img/classico-movel.jpg", imgAlt: "Poltrona de veludo azul-marinho com detalhe em latão dourado" },
+        { type: "objeto", img: "img/classico-objeto.jpg", imgAlt: "Still de console clássico com luminária dourada e moldura de espelho entalhada" }
+      ]
+    },
+    boho: {
+      name: "Boho Chic",
+      tagline: "Livre, colorido e cheio de histórias.",
+      palette: ["#b7573f","#c9a24b","#5c6e4a"],
+      desc: "Seu apê é uma colagem de viagens, texturas e cores. Você gosta de misturar estampas, plantas e objetos garimpados — nada combina demais, e é exatamente isso que funciona.",
+      tips: [
+        "Sobreponha tapetes de tamanhos e texturas diferentes.",
+        "Encha o apê de plantas — quanto mais, melhor.",
+        "Misture estampas com coragem: floral, étnico, geométrico."
+      ],
+      images: [
+        { type: "ambiente", img: "img/boho-ambiente.jpg", imgAlt: "Sala de estar boho chic, com muitas plantas, macramê e tapetes sobrepostos" },
+        { type: "movel", img: "img/boho-movel.jpg", imgAlt: "Poltrona de vime com almofadas de estampa étnica" },
+        { type: "objeto", img: "img/boho-objeto.jpg", imgAlt: "Still boho com cesto de fibra natural, macramê e vaso de cerâmica pintada" }
+      ]
+    },
+    japandi: {
+      name: "Japandi",
+      tagline: "Calma japonesa, aconchego escandinavo.",
+      palette: ["#e8dcc8","#8a6a4f","#221f1c"],
+      desc: "Você busca simplicidade com alma. Ambientes limpos, mas nunca frios — madeira natural, tons terrosos e um ritual quase zen na forma de morar.",
+      tips: [
+        "Prefira móveis baixos, de linhas retas e madeira natural à mostra.",
+        "Use uma paleta em tons terrosos: bege, caramelo, preto fosco.",
+        "Menos objetos, mas escolhidos com intenção — nada de decoração por decoração."
+      ],
+      images: [
+        { type: "ambiente", img: "img/japandi-ambiente.jpg", imgAlt: "Sala de estar estilo Japandi, com madeira natural e tons terrosos" },
+        { type: "movel", img: "img/japandi-movel.jpg", imgAlt: "Poltrona baixa de madeira clara com assento em linho cru" },
+        { type: "objeto", img: "img/japandi-objeto.jpg", imgAlt: "Still Japandi com cerâmica artesanal e vaso preto fosco" }
+      ]
+    },
+    escandinavo: {
+      name: "Escandinavo",
+      tagline: "Luz, conforto e simplicidade nórdica.",
+      palette: ["#f5f1ea","#a9c4d3","#8c6e54"],
+      desc: "Seu apê ideal é claro, aconchegante e funcional. Você combina o minimalismo com toques de calor humano — madeira clara, tecidos macios e muita luz natural.",
+      tips: [
+        "Priorize janelas livres e cortinas leves para maximizar a luz.",
+        "Use madeira clara (freijó, carvalho, pinus) nos móveis.",
+        "Aposte em mantas, velas e texturas macias para o clima hygge."
+      ],
+      images: [
+        { type: "ambiente", img: "img/escandinavo-ambiente.jpg", imgAlt: "Sala de estar escandinava, clara e com muita luz natural" },
+        { type: "movel", img: "img/escandinavo-movel.jpg", imgAlt: "Cadeira de madeira clara com almofada de linho ao lado de uma janela" },
+        { type: "objeto", img: "img/escandinavo-objeto.jpg", imgAlt: "Still escandinavo com manta de tricô, vela e xícara de cerâmica" }
+      ]
+    }
+  };
+
+  var state = {
+    name: "",
+    scores: {},
+    deck: [],
+    deckIndex: 0,
+    history: []
+  };
+
+  var screens = {
+    intro: document.getElementById("screen-intro"),
+    swipe: document.getElementById("screen-swipe"),
+    lead: document.getElementById("screen-lead"),
+    result: document.getElementById("screen-result")
+  };
+  var progressTrack = document.getElementById("progressTrack");
+  var progressFill = document.getElementById("progressFill");
+  var deckEl = document.getElementById("deck");
+
+  function showScreen(name){
+    Object.keys(screens).forEach(function(k){ screens[k].hidden = (k !== name); });
+    progressTrack.hidden = (name !== "swipe");
+    window.scrollTo({ top: 0, behavior: "instant" in window.scrollTo ? "instant" : "auto" });
+  }
+
+  function shuffle(arr){
+    for (var i = arr.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+    }
+    return arr;
+  }
+
+  function resetState(){
+    state.scores = {};
+    STYLE_ORDER.forEach(function(s){ state.scores[s] = 0; });
+    var deck = [];
+    STYLE_ORDER.forEach(function(key){
+      STYLES[key].images.forEach(function(image){
+        deck.push({ key: key, img: image.img, imgAlt: image.imgAlt, tagline: STYLES[key].tagline });
+      });
+    });
+    state.deck = shuffle(deck);
+    state.deckIndex = 0;
+    state.history = [];
+  }
+
+  function updateProgress(){
+    document.getElementById("swipeBack").hidden = (state.deckIndex === 0);
+    document.getElementById("swipeCount").textContent = "Foto " + Math.min(state.deckIndex + 1, state.deck.length) + " de " + state.deck.length;
+    progressFill.style.width = Math.round((state.deckIndex / state.deck.length) * 100) + "%";
+  }
+
+  var currentCardEl = null;
+  var currentKey = null;
+  var busy = false;
+
+  function renderCards(){
+    if (state.deckIndex >= state.deck.length){
+      progressFill.style.width = "100%";
+      showScreen("lead");
+      return;
+    }
+    updateProgress();
+    deckEl.innerHTML = "";
+    currentCardEl = null;
+    currentKey = null;
+    busy = false;
+
+    var peekItem = state.deck[state.deckIndex + 1];
+    if (peekItem){
+      var peek = buildCard(peekItem, false);
+      deckEl.appendChild(peek);
+    }
+    var topItem = state.deck[state.deckIndex];
+    var top = buildCard(topItem, true);
+    deckEl.appendChild(top);
+    currentCardEl = top;
+    currentKey = topItem.key;
+  }
+
+  function buildCard(item, interactive){
+    var card = document.createElement("div");
+    card.className = "swipe-card";
+    card.innerHTML =
+      '<img src="' + item.img + '" alt="' + item.imgAlt + '" loading="lazy">' +
+      '<div class="card-label">' + item.tagline + '</div>' +
+      '<span class="stamp stamp-like">Gostei</span>' +
+      '<span class="stamp stamp-nope">Passo</span>';
+    if (interactive){
+      card.style.zIndex = "2";
+      attachDrag(card, item.key);
+    } else {
+      card.style.zIndex = "1";
+      card.style.transform = "scale(.96) translateY(10px)";
+      card.style.opacity = ".9";
+      card.style.pointerEvents = "none";
+    }
+    return card;
+  }
+
+  function attachDrag(card, key){
+    var startX = 0, startY = 0, dx = 0, dy = 0, dragging = false;
+
+    card.addEventListener("pointerdown", function(e){
+      dragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      card.style.transition = "none";
+      if (card.setPointerCapture) card.setPointerCapture(e.pointerId);
+    });
+
+    card.addEventListener("pointermove", function(e){
+      if (!dragging) return;
+      dx = e.clientX - startX;
+      dy = e.clientY - startY;
+      var rot = dx / 14;
+      card.style.transform = "translate(" + dx + "px," + dy + "px) rotate(" + rot + "deg)";
+      var likeStamp = card.querySelector(".stamp-like");
+      var nopeStamp = card.querySelector(".stamp-nope");
+      var intensity = Math.min(Math.abs(dx) / 90, 1);
+      if (dx > 0){ likeStamp.style.opacity = intensity; nopeStamp.style.opacity = 0; }
+      else if (dx < 0){ nopeStamp.style.opacity = intensity; likeStamp.style.opacity = 0; }
+      else { likeStamp.style.opacity = 0; nopeStamp.style.opacity = 0; }
+    });
+
+    function onUp(){
+      if (!dragging) return;
+      dragging = false;
+      if (busy) return;
+      card.style.transition = "transform .25s ease, opacity .25s ease";
+      var threshold = 90;
+      if (dx > threshold){ resolveSwipe(card, key, true); }
+      else if (dx < -threshold){ resolveSwipe(card, key, false); }
+      else {
+        card.style.transform = "translate(0,0) rotate(0)";
+        card.querySelector(".stamp-like").style.opacity = 0;
+        card.querySelector(".stamp-nope").style.opacity = 0;
+      }
+      dx = 0; dy = 0;
+    }
+
+    card.addEventListener("pointerup", onUp);
+    card.addEventListener("pointercancel", onUp);
+  }
+
+  function resolveSwipe(card, key, liked){
+    if (busy) return;
+    busy = true;
+    card.style.transform = "translate(" + (liked ? 700 : -700) + "px, -60px) rotate(" + (liked ? 26 : -26) + "deg)";
+    card.style.opacity = "0";
+    card.style.pointerEvents = "none";
+
+    state.history.push({ key: key, liked: liked });
+    if (liked) state.scores[key] = (state.scores[key] || 0) + 1;
+    state.deckIndex += 1;
+
+    setTimeout(renderCards, 220);
+  }
+
+  function goBack(){
+    if (busy || state.history.length === 0) return;
+    var last = state.history.pop();
+    if (last.liked) state.scores[last.key] -= 1;
+    state.deckIndex -= 1;
+    showScreen("swipe");
+    renderCards();
+  }
+
+  document.getElementById("btnYes").addEventListener("click", function(){
+    if (!busy && currentCardEl && currentKey) resolveSwipe(currentCardEl, currentKey, true);
+  });
+  document.getElementById("btnNo").addEventListener("click", function(){
+    if (!busy && currentCardEl && currentKey) resolveSwipe(currentCardEl, currentKey, false);
+  });
+  document.getElementById("swipeBack").addEventListener("click", goBack);
+  document.getElementById("leadBack").addEventListener("click", goBack);
+
+  document.getElementById("startBtn").addEventListener("click", function(){
+    resetState();
+    showScreen("swipe");
+    renderCards();
+  });
+
+  function computeResult(){
+    var best = STYLE_ORDER[0];
+    var bestScore = -1;
+    STYLE_ORDER.forEach(function(key){
+      var score = state.scores[key] || 0;
+      if (score > bestScore){
+        bestScore = score;
+        best = key;
+      }
+    });
+    return best;
+  }
+
+  function renderResult(){
+    var key = computeResult();
+    var style = STYLES[key];
+    var heroImage = style.images[0];
+
+    document.getElementById("rHero").innerHTML =
+      '<img src="' + heroImage.img + '" alt="' + heroImage.imgAlt + '" loading="lazy">';
+    document.getElementById("rName").textContent = style.name;
+    document.getElementById("rTagline").textContent = style.tagline;
+    document.getElementById("rDesc").textContent =
+      (state.name ? state.name + ", este" : "Este") + " é o seu match: " + style.desc;
+
+    var paletteWrap = document.getElementById("rPalette");
+    paletteWrap.innerHTML = "";
+    style.palette.forEach(function(hex){
+      var sw = document.createElement("span");
+      sw.style.background = hex;
+      paletteWrap.appendChild(sw);
+    });
+
+    var tipsWrap = document.getElementById("rTips");
+    tipsWrap.innerHTML = "";
+    style.tips.forEach(function(tip){
+      var li = document.createElement("li");
+      li.textContent = tip;
+      tipsWrap.appendChild(li);
+    });
+
+    document.getElementById("rCta").href = SITE_URL;
+
+    showScreen("result");
+  }
+
+  var leadPhoneEl = document.getElementById("leadPhone");
+  leadPhoneEl.addEventListener("input", function(){ leadPhoneEl.setCustomValidity(""); });
+
+  function sendLeadToSheet(nome, email, whatsapp, estilo){
+    if (!LEADS_ENDPOINT) return;
+    fetch(LEADS_ENDPOINT, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ nome: nome, email: email, whatsapp: whatsapp, estilo: estilo, quiz: "tinder-de-estilo" })
+    }).catch(function(){});
+  }
+
+  document.getElementById("leadForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var nameEl = document.getElementById("leadName");
+    var emailEl = document.getElementById("leadEmail");
+    var digits = leadPhoneEl.value.replace(/\D/g, "");
+    if (digits.length < 10 || digits.length > 11) {
+      leadPhoneEl.setCustomValidity("Digite um WhatsApp válido, com DDD (10 ou 11 dígitos).");
+      leadPhoneEl.reportValidity();
+      return;
+    }
+    leadPhoneEl.setCustomValidity("");
+    var fullName = nameEl.value.trim();
+    state.name = fullName.split(" ")[0] || "";
+    var styleKey = computeResult();
+    var styleName = STYLES[styleKey] ? STYLES[styleKey].name : "";
+    sendLeadToSheet(fullName, emailEl.value.trim(), leadPhoneEl.value.trim(), styleName);
+    renderResult();
+  });
+
+  document.getElementById("rRestart").addEventListener("click", function(){
+    document.getElementById("leadForm").reset();
+    resetState();
+    showScreen("intro");
+  });
+
+  document.getElementById("rShare").addEventListener("click", function(){
+    var key = computeResult();
+    var style = STYLES[key];
+    var text = "Descobri meu match de estilo de decoração: " + style.name + "! Faça o teste da Decorafit e descubra o seu:";
+    var url = location.href;
+
+    if (navigator.share){
+      navigator.share({ text: text, url: url }).catch(function(){});
+    } else {
+      var fallback = text + " " + url;
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(fallback).then(function(){
+          var btn = document.getElementById("rShare");
+          var original = btn.textContent;
+          btn.textContent = "Link copiado!";
+          setTimeout(function(){ btn.textContent = original; }, 1800);
+        }).catch(function(){});
+      }
+    }
+  });
+
+  resetState();
+})();
+</script>
+</body>
+</html>
